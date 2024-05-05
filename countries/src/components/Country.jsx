@@ -44,11 +44,11 @@ const Country = (props) => {
             <h2>Weather in {props.capital}</h2>
             {weather && (
                 <div>
-                    <p>Temperature: {weather.main.temp} Celsius</p>
+                    <p>temperature {weather.main.temp} Celsius</p>
                     <img
                         src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
                     />
-                    <p>Wind: {weather.wind.speed} m/s</p>
+                    <p>wind {weather.wind.speed} m/s</p>
                 </div>
             )}
         </div>
