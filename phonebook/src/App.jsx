@@ -20,6 +20,7 @@ const App = () => {
       .then(initialPersons => {
         setPersons(initialPersons)
       })
+      .catch((e) => console.log(e));
   }, [])
 
   const addName = (event) => {
@@ -44,9 +45,8 @@ const App = () => {
           })
           .catch(error => {
             console.log("Error reached!")
-            setErrorMessage(
-              `Information of ${newName} has already been removed from the server`
-            )
+            console.log(error.response.data.error)
+            setErrorMessage(error.response.data.error);
             setTimeout(() => {
               setErrorMessage(null)
             }, 5000)
@@ -58,26 +58,34 @@ const App = () => {
         name: newName,
         number: newNumber,
       }
+
       personService
         .create(newPerson)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          setNotificationMessage(
-            `${returnedPerson.name} added`
-          )
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 5000)
-          setNewName('')
-          setNewNumber('')
+          if (returnedPerson) {
+            setPersons(persons.concat(returnedPerson))
+            setNotificationMessage(`${returnedPerson.name} added`)
+            setTimeout(() => {
+              setNotificationMessage(null)
+            }, 5000)
+            setNewName('')
+            setNewNumber('')
+          } else {
+            setErrorMessage('An error occurred while adding the person. Check that the name and number are both defined and that the name has at least 3 characters and the number is at least 8 characters long and formed of two parts that are separated by -, the first part has two or three numbers and the second part also consists of numbers.');
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 30000)
+          }
         })
         .catch(error => {
-          setErrorMessage(
-            `Information of ${returnedPerson.name} has already been removed from server`
-          )
+          if (error.response && error.response.data && error.response.data.error) {
+            setErrorMessage(error.response.data.error);
+          } else {
+            setErrorMessage('An error occurred while adding the person. Check that the name and number are both defined and that the name has at least 3 characters and the number is at least 8 characters long and formed of two parts that are separated by -, the first part has two or three numbers and the second part also consists of numbers.');
+          }
           setTimeout(() => {
             setErrorMessage(null)
-          }, 5000)
+          }, 30000)
         })
     }
   }
